@@ -1,0 +1,788 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "gateway.proto",
+    "version": "version not set"
+  },
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/api/gateways": {
+      "get": {
+        "summary": "List lists the gateways.",
+        "operationId": "List",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/apiListGatewayResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "limit",
+            "description": "Max number of nodes to return in the result-set.",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "offset",
+            "description": "Offset of the result-set (for pagination).",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "organizationID",
+            "description": "ID of the organization for which to filter on, when left blank the\nresponse will return all gateways to which the user has access to.",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "search",
+            "description": "Search on name or gateway MAC (optional).",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Gateway"
+        ]
+      },
+      "post": {
+        "summary": "Create creates the given gateway.",
+        "operationId": "Create",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/apiCreateGatewayResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/apiCreateGatewayRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Gateway"
+        ]
+      }
+    },
+    "/api/gateways/{mac}": {
+      "get": {
+        "summary": "Get returns the gateway for the requested mac address.",
+        "operationId": "Get",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/apiGetGatewayResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "mac",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Gateway"
+        ]
+      },
+      "delete": {
+        "summary": "Delete deletes the gateway matching the given mac address.",
+        "operationId": "Delete",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/apiDeleteGatewayResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "mac",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Gateway"
+        ]
+      },
+      "put": {
+        "summary": "Update updates the gateway matching the given mac address.",
+        "operationId": "Update",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/apiUpdateGatewayResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "mac",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/apiUpdateGatewayRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Gateway"
+        ]
+      }
+    },
+    "/api/gateways/{mac}/frames": {
+      "get": {
+        "summary": "StreamFrameLogs streams the uplink and downlink frame-logs for the given mac.\nNote: these are the raw LoRaWAN frames and this endpoint is intended for debugging.",
+        "operationId": "StreamFrameLogs",
+        "responses": {
+          "200": {
+            "description": "(streaming responses)",
+            "schema": {
+              "$ref": "#/definitions/apiStreamGatewayFrameLogsResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "mac",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Gateway"
+        ]
+      }
+    },
+    "/api/gateways/{mac}/pings/last": {
+      "get": {
+        "summary": "GetLastPing returns the last emitted ping and gateways receiving this ping.",
+        "operationId": "GetLastPing",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/apiGetLastPingResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "mac",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Gateway"
+        ]
+      }
+    },
+    "/api/gateways/{mac}/stats": {
+      "get": {
+        "summary": "GetStats lists the gateway stats given the query parameters.",
+        "operationId": "GetStats",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/apiGetGatewayStatsResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "mac",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "interval",
+            "description": "Aggregation interval.  One of \"second\", \"minute\", \"hour\", \"day\", \"week\",\n\"month\", \"quarter\", \"year\".  Case insensitive.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "startTimestamp",
+            "description": "Timestamp to start from.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "endTimestamp",
+            "description": "Timestamp until to get from.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Gateway"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "apiCreateGatewayRequest": {
+      "type": "object",
+      "properties": {
+        "mac": {
+          "type": "string",
+          "description": "Hex encoded mac address."
+        },
+        "name": {
+          "type": "string",
+          "title": "A name for the gateway"
+        },
+        "description": {
+          "type": "string",
+          "title": "A description for the gateway"
+        },
+        "latitude": {
+          "type": "number",
+          "format": "double",
+          "title": "Latitude of the gateway -90 to 90"
+        },
+        "longitude": {
+          "type": "number",
+          "format": "double",
+          "title": "Longitude of the gateway -180 to 180"
+        },
+        "altitude": {
+          "type": "number",
+          "format": "double",
+          "title": "Altitude of the gateway in meters"
+        },
+        "organizationID": {
+          "type": "string",
+          "format": "int64",
+          "description": "ID of the organization to which this gateway belongs."
+        },
+        "ping": {
+          "type": "boolean",
+          "format": "boolean",
+          "description": "Gateway sends out a periodic ping."
+        },
+        "networkServerID": {
+          "type": "string",
+          "format": "int64",
+          "description": "ID of the network-server to which the gateway is connected."
+        },
+        "gatewayProfileID": {
+          "type": "string",
+          "description": "ID of the gateway-profile (optional)."
+        }
+      }
+    },
+    "apiCreateGatewayResponse": {
+      "type": "object"
+    },
+    "apiDataRate": {
+      "type": "object",
+      "properties": {
+        "modulation": {
+          "type": "string",
+          "description": "The used modulation (LORA or FSK)."
+        },
+        "bandwidth": {
+          "type": "integer",
+          "format": "int64",
+          "description": "Bandwidth (in kHz)."
+        },
+        "spreadFactor": {
+          "type": "integer",
+          "format": "int64",
+          "description": "Used spread-factor."
+        },
+        "bitrate": {
+          "type": "integer",
+          "format": "int64",
+          "description": "Bitrate (used for FSK modulation)."
+        }
+      }
+    },
+    "apiDeleteGatewayResponse": {
+      "type": "object"
+    },
+    "apiDownlinkFrameLog": {
+      "type": "object",
+      "properties": {
+        "txInfo": {
+          "$ref": "#/definitions/apiDownlinkTXInfo",
+          "description": "TX information of the downlink."
+        },
+        "phyPayloadJSON": {
+          "type": "string",
+          "description": "LoRaWAN PHYPayload."
+        }
+      }
+    },
+    "apiDownlinkTXInfo": {
+      "type": "object",
+      "properties": {
+        "mac": {
+          "type": "string",
+          "description": "Gateway MAC."
+        },
+        "immediately": {
+          "type": "boolean",
+          "format": "boolean",
+          "description": "Frame must be sent immediately."
+        },
+        "timeSinceGPSEpoch": {
+          "type": "string",
+          "description": "Transmit frame at the given time since GPS epoch."
+        },
+        "timestamp": {
+          "type": "integer",
+          "format": "int64",
+          "description": "Transmit the frame at the given gateway internal timestamp."
+        },
+        "frequency": {
+          "type": "integer",
+          "format": "int64",
+          "description": "TX frequency (in Hz)."
+        },
+        "power": {
+          "type": "integer",
+          "format": "int32",
+          "description": "TX power (in dBm)."
+        },
+        "dataRate": {
+          "$ref": "#/definitions/apiDataRate",
+          "description": "Data-rate."
+        },
+        "codeRate": {
+          "type": "string",
+          "description": "Code rate."
+        },
+        "iPol": {
+          "type": "boolean",
+          "format": "boolean",
+          "description": "Lora modulation polarization inversion."
+        },
+        "board": {
+          "type": "integer",
+          "format": "int64",
+          "description": "The board identifier that received the uplink frame."
+        },
+        "antenna": {
+          "type": "integer",
+          "format": "int64",
+          "description": "THe antenna identifier that received the uplink frame."
+        }
+      }
+    },
+    "apiGatewayStats": {
+      "type": "object",
+      "properties": {
+        "timestamp": {
+          "type": "string",
+          "description": "Timestamp of the (aggregated) measurement."
+        },
+        "rxPacketsReceived": {
+          "type": "integer",
+          "format": "int32",
+          "description": "Packets received by the gateway."
+        },
+        "rxPacketsReceivedOK": {
+          "type": "integer",
+          "format": "int32",
+          "description": "Packets received by the gateway that passed the CRC check."
+        },
+        "txPacketsReceived": {
+          "type": "integer",
+          "format": "int32",
+          "description": "Packets received by the gateway for transmission."
+        },
+        "txPacketsEmitted": {
+          "type": "integer",
+          "format": "int32",
+          "description": "Packets transmitted by the gateway."
+        }
+      }
+    },
+    "apiGetGatewayResponse": {
+      "type": "object",
+      "properties": {
+        "mac": {
+          "type": "string",
+          "description": "Hex encoded mac address."
+        },
+        "name": {
+          "type": "string",
+          "title": "A name for the gateway"
+        },
+        "description": {
+          "type": "string",
+          "title": "A description for the gateway"
+        },
+        "latitude": {
+          "type": "number",
+          "format": "double",
+          "title": "Latitude of the gateway -90.0 to 90.0"
+        },
+        "longitude": {
+          "type": "number",
+          "format": "double",
+          "title": "Longitude of the gateway -180.0 to 180.0"
+        },
+        "altitude": {
+          "type": "number",
+          "format": "double",
+          "title": "Altitude of the gateway in meters"
+        },
+        "createdAt": {
+          "type": "string",
+          "title": "Creation timestamp of the record"
+        },
+        "updatedAt": {
+          "type": "string",
+          "title": "Last update timestamp of the record"
+        },
+        "firstSeenAt": {
+          "type": "string",
+          "description": "The timestamp of the first data from the gateway."
+        },
+        "lastSeenAt": {
+          "type": "string",
+          "description": "The timestamp of the most recent data from the gateway."
+        },
+        "organizationID": {
+          "type": "string",
+          "format": "int64",
+          "description": "ID of the organization to which this gateway belongs."
+        },
+        "ping": {
+          "type": "boolean",
+          "format": "boolean",
+          "description": "Gateway sends out a periodic ping."
+        },
+        "networkServerID": {
+          "type": "string",
+          "format": "int64",
+          "description": "ID of the network-server to which the gateway is connected."
+        },
+        "gatewayProfileID": {
+          "type": "string",
+          "description": "ID of the gateway-profile (optional)."
+        }
+      }
+    },
+    "apiGetGatewayStatsResponse": {
+      "type": "object",
+      "properties": {
+        "result": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/apiGatewayStats"
+          }
+        }
+      }
+    },
+    "apiGetLastPingResponse": {
+      "type": "object",
+      "properties": {
+        "createdAt": {
+          "type": "string",
+          "description": "Created at."
+        },
+        "frequency": {
+          "type": "integer",
+          "format": "int64",
+          "description": "Frequency."
+        },
+        "dr": {
+          "type": "integer",
+          "format": "int64",
+          "description": "Data-rate."
+        },
+        "pingRX": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/apiPingRX"
+          },
+          "description": "Gateways and meta-data of reception."
+        }
+      }
+    },
+    "apiListGatewayItem": {
+      "type": "object",
+      "properties": {
+        "mac": {
+          "type": "string",
+          "description": "Hex encoded mac address."
+        },
+        "name": {
+          "type": "string",
+          "title": "A name for the gateway"
+        },
+        "description": {
+          "type": "string",
+          "title": "A description for the gateway"
+        },
+        "createdAt": {
+          "type": "string",
+          "title": "Creation timestamp of the record"
+        },
+        "updatedAt": {
+          "type": "string",
+          "title": "Last update timestamp of the record"
+        },
+        "organizationID": {
+          "type": "string",
+          "format": "int64",
+          "description": "ID of the organization to which this gateway belongs."
+        },
+        "networkServerID": {
+          "type": "string",
+          "format": "int64",
+          "description": "ID of the network-server to which the gateway is connected."
+        }
+      }
+    },
+    "apiListGatewayResponse": {
+      "type": "object",
+      "properties": {
+        "totalCount": {
+          "type": "integer",
+          "format": "int32",
+          "description": "Total number of nodes available within the result-set."
+        },
+        "result": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/apiListGatewayItem"
+          },
+          "description": "Nodes within this result-set."
+        }
+      }
+    },
+    "apiPingRX": {
+      "type": "object",
+      "properties": {
+        "mac": {
+          "type": "string",
+          "description": "Hex encoded mac address."
+        },
+        "rssi": {
+          "type": "integer",
+          "format": "int32",
+          "description": "RSSI."
+        },
+        "loraSNR": {
+          "type": "number",
+          "format": "double",
+          "description": "LoRa SNR."
+        },
+        "latitude": {
+          "type": "number",
+          "format": "double",
+          "description": "Latitude of the gateway -90.0 to 90.0."
+        },
+        "longitude": {
+          "type": "number",
+          "format": "double",
+          "description": "Longitude of the gateway -180.0 to 180.0."
+        },
+        "altitude": {
+          "type": "number",
+          "format": "double",
+          "description": "Altitude of the gateway in meters."
+        }
+      }
+    },
+    "apiStreamGatewayFrameLogsResponse": {
+      "type": "object",
+      "properties": {
+        "uplinkFrames": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/apiUplinkFrameLog"
+          },
+          "description": "Contains zero or one uplink frame."
+        },
+        "downlinkFrames": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/apiDownlinkFrameLog"
+          },
+          "description": "Contains zero or one downlink frame."
+        }
+      }
+    },
+    "apiUpdateGatewayRequest": {
+      "type": "object",
+      "properties": {
+        "mac": {
+          "type": "string",
+          "description": "Hex encoded mac address."
+        },
+        "name": {
+          "type": "string",
+          "title": "A name for the gateway"
+        },
+        "description": {
+          "type": "string",
+          "title": "A description for the gateway"
+        },
+        "latitude": {
+          "type": "number",
+          "format": "double",
+          "title": "Latitude of the gateway -90.0 to 90.0"
+        },
+        "longitude": {
+          "type": "number",
+          "format": "double",
+          "title": "Longitude of the gateway -180.0 to 180.0"
+        },
+        "altitude": {
+          "type": "number",
+          "format": "double",
+          "title": "Altitude of the gateway in meters"
+        },
+        "organizationID": {
+          "type": "string",
+          "format": "int64",
+          "description": "ID of the organization to which this gateway belongs."
+        },
+        "ping": {
+          "type": "boolean",
+          "format": "boolean",
+          "description": "Gateway sends out a periodic ping."
+        },
+        "gatewayProfileID": {
+          "type": "string",
+          "description": "ID of the gateway-profile (optional)."
+        }
+      }
+    },
+    "apiUpdateGatewayResponse": {
+      "type": "object"
+    },
+    "apiUplinkFrameLog": {
+      "type": "object",
+      "properties": {
+        "txInfo": {
+          "$ref": "#/definitions/apiUplinkTXInfo",
+          "description": "TX information of the uplink."
+        },
+        "rxInfo": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/apiUplinkRXInfo"
+          },
+          "description": "RX information of the uplink."
+        },
+        "phyPayloadJSON": {
+          "type": "string",
+          "description": "LoRaWAN PHYPayload."
+        }
+      }
+    },
+    "apiUplinkRXInfo": {
+      "type": "object",
+      "properties": {
+        "mac": {
+          "type": "string",
+          "description": "Gateway MAC."
+        },
+        "time": {
+          "type": "string",
+          "description": "Time when the frame was received (if available)."
+        },
+        "timeSinceGPSEpoch": {
+          "type": "string",
+          "description": "Time when the frame was received as time since GPS epoch (if available)."
+        },
+        "timestamp": {
+          "type": "integer",
+          "format": "int64",
+          "description": "Gateway internal timestamp."
+        },
+        "rssi": {
+          "type": "integer",
+          "format": "int32",
+          "description": "RSSI."
+        },
+        "loRaSNR": {
+          "type": "number",
+          "format": "float",
+          "description": "LoRa SNR."
+        },
+        "board": {
+          "type": "integer",
+          "format": "int64",
+          "description": "The board identifier that received the uplink frame."
+        },
+        "antenna": {
+          "type": "integer",
+          "format": "int64",
+          "description": "THe antenna identifier that received the uplink frame."
+        }
+      }
+    },
+    "apiUplinkTXInfo": {
+      "type": "object",
+      "properties": {
+        "frequency": {
+          "type": "integer",
+          "format": "int64",
+          "description": "TX frequency (in Hz)."
+        },
+        "dataRate": {
+          "$ref": "#/definitions/apiDataRate",
+          "description": "Data-rate."
+        },
+        "codeRate": {
+          "type": "string",
+          "description": "Code rate."
+        }
+      }
+    }
+  }
+}
